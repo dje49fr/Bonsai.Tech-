@@ -20,8 +20,6 @@
             <p id="compteur-arbres">Chargement...</p>
         </div>
         <div class="header-actions">
-            <button id="calendar-btn" class="icon-btn-header" aria-label="Calendrier">📅</button>
-            
             <button id="install-btn" class="install-btn" style="display: none;">⬇</button>
             
             <button id="add-btn" class="add-btn-black" aria-label="Ajouter">+</button>
@@ -77,6 +75,11 @@
                         </div>
                         
                         <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Défoliation"> Défoliation</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
+
+                        <div class="task-row">
                             <label><input type="checkbox" class="task-check" value="Traitement"> Traitement</label>
                             <input type="date" class="task-date hidden">
                         </div>
@@ -94,17 +97,6 @@
                     <button type="submit" class="btn-primary">Enregistrer</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <div id="calendar-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h2 class="modal-title">📅 Travaux à venir</h2>
-            <div id="calendar-list" class="calendar-list">
-                </div>
-            <div class="modal-actions">
-                <button type="button" id="close-calendar" class="btn-primary">Fermer</button>
-            </div>
         </div>
     </div>
 
