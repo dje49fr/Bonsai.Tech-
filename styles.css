@@ -1,0 +1,143 @@
+/* --- RESET ET BASES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #FDFBF7; /* Beige Crème */
+    font-family: 'Lato', sans-serif;
+    color: #333;
+    height: 100vh;
+    overflow: hidden; /* On gère le scroll dans le main */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HEADER --- */
+header {
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.intro h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: #1a1a1a;
+}
+
+.intro p {
+    color: #888;
+    margin-top: 5px;
+}
+
+/* --- CAROUSEL (LA PARTIE IMPORTANTE) --- */
+main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Centre verticalement */
+}
+
+.carousel-container {
+    display: flex;
+    overflow-x: auto; /* Scroll horizontal */
+    
+    /* C'est cette ligne qui crée l'effet de switch/verrouillage */
+    scroll-snap-type: x mandatory; 
+    
+    gap: 20px;
+    padding: 0 24px; /* Marge sur les côtés */
+    width: 100%;
+    padding-bottom: 30px;
+    
+    /* Masquer la barre de défilement pour faire propre */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE */
+}
+.carousel-container::-webkit-scrollbar { 
+    display: none; /* Chrome/Safari */
+}
+
+/* --- LES FICHES BONSAÏS --- */
+.bonsai-card {
+    /* La carte prend 80% de la largeur de l'écran */
+    min-width: 80vw; 
+    
+    /* Verrouille la carte au centre quand on lâche le doigt */
+    scroll-snap-align: center; 
+    
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.card-image {
+    background-color: #F0EFE9;
+    height: 350px; /* Hauteur de l'image */
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-details h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.status {
+    color: #8FB358; /* Vert nature */
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+    margin-top: auto; /* Pousse vers le bas */
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.actions span {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Petit espaceur pour pouvoir scroller jusqu'au bout à droite */
+.spacer {
+    min-width: 5px;
+}
