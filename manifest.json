@@ -1,7 +1,7 @@
 {
   "name": "Bonsaïs Do",
   "short_name": "Bonsaïs",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#FDFBF7",
   "theme_color": "#FDFBF7",
