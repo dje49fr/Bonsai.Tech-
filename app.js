@@ -1,232 +1,230 @@
-// --- 1. CONFIGURATION DE LA BASE DE DONNÉES (IndexedDB) ---
+// --- 1. CONFIGURATION DB ---
 const DB_NAME = 'BonsaisDoDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'bonsais';
 let db;
 
-// --- 2. DONNÉES STATIQUES (Espèces) ---
+// Espèces (Simplifié pour l'exemple)
 const speciesDB = [
-    { id: 'pin_blanc', name: 'Pin Blanc du Japon', waterFreq: 3, pruning: 'Octobre' },
-    { id: 'erable', name: 'Érable du Japon', waterFreq: 2, pruning: 'Juin' },
-    { id: 'genevrier', name: 'Genévrier', waterFreq: 4, pruning: 'Toute l\'année' },
-    { id: 'orme', name: 'Orme de Chine', waterFreq: 2, pruning: 'Mars' },
-    { id: 'ficus', name: 'Ficus', waterFreq: 3, pruning: 'Mai' },
-    { id: 'azalee', name: 'Azalée', waterFreq: 1, pruning: 'Après floraison' },
-    { id: 'olivier', name: 'Olivier', waterFreq: 5, pruning: 'Printemps' }
+    { id: 'pin_blanc', name: 'Pin Blanc' },
+    { id: 'erable', name: 'Érable Japon' },
+    { id: 'genevrier', name: 'Genévrier' },
+    { id: 'orme', name: 'Orme de Chine' },
+    { id: 'ficus', name: 'Ficus' },
+    { id: 'azalee', name: 'Azalée' },
+    { id: 'olivier', name: 'Olivier' }
 ];
 
-// --- 3. DOM ELEMENTS ---
+// --- 2. DOM ELEMENTS ---
 const bonsaiListEl = document.getElementById('bonsai-list');
 const countEl = document.getElementById('compteur-arbres');
 const addBtn = document.getElementById('add-btn');
 const modal = document.getElementById('modal-overlay');
+const modalTitle = document.getElementById('modal-title');
 const cancelBtn = document.getElementById('cancel-btn');
 const form = document.getElementById('bonsai-form');
 const speciesSelect = document.getElementById('input-species');
 
-// --- 4. INITIALISATION DE LA DB ET DE L'APP ---
+// --- 3. INITIALISATION ---
 function init() {
-    console.log("Ouverture de la base de données...");
-    
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    // Création de la structure si c'est la première fois (ou mise à jour)
-    request.onupgradeneeded = (event) => {
-        db = event.target.result;
+    request.onupgradeneeded = (e) => {
+        db = e.target.result;
         if (!db.objectStoreNames.contains(STORE_NAME)) {
-            // On crée une "table" 'bonsais' avec un ID automatique
             db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
         }
     };
-
-    request.onsuccess = (event) => {
-        db = event.target.result;
-        console.log("Base de données connectée ! Stockage illimité activé.");
+    request.onsuccess = (e) => {
+        db = e.target.result;
         populateSpeciesSelect();
-        loadBonsaisFromDB(); // Charger les arbres
-    };
-
-    request.onerror = (event) => {
-        console.error("Erreur DB:", event.target.errorCode);
-        countEl.textContent = "Erreur de chargement de la base de données.";
+        loadBonsaisFromDB();
     };
 }
 
-// --- 5. FONCTIONS DATABASE (CRUD) ---
-
-// A. Charger tous les arbres
+// --- 4. CRUD FONCTIONS ---
 function loadBonsaisFromDB() {
     const transaction = db.transaction([STORE_NAME], 'readonly');
-    const objectStore = transaction.objectStore(STORE_NAME);
-    const request = objectStore.getAll();
-
-    request.onsuccess = (event) => {
-        const allBonsais = event.target.result;
-        renderCarousel(allBonsais);
-    };
+    const request = transaction.objectStore(STORE_NAME).getAll();
+    request.onsuccess = (e) => renderCarousel(e.target.result);
 }
 
-// B. Ajouter un arbre
-function addBonsaiToDB(newBonsai) {
+function saveBonsaiToDB(item) {
     const transaction = db.transaction([STORE_NAME], 'readwrite');
-    const objectStore = transaction.objectStore(STORE_NAME);
-    const request = objectStore.add(newBonsai);
-
+    // 'put' permet de créer OU de mettre à jour si l'id existe
+    const request = transaction.objectStore(STORE_NAME).put(item); 
     request.onsuccess = () => {
-        form.reset();
-        modal.classList.add('hidden');
-        loadBonsaisFromDB(); // Recharger l'affichage
-        console.log("Arbre sauvegardé dans IndexedDB");
-    };
-
-    request.onerror = () => {
-        alert("Erreur lors de la sauvegarde.");
+        closeModal();
+        loadBonsaisFromDB();
     };
 }
 
-// C. Supprimer un arbre
 function deleteBonsaiFromDB(id) {
     const transaction = db.transaction([STORE_NAME], 'readwrite');
-    const objectStore = transaction.objectStore(STORE_NAME);
-    const request = objectStore.delete(id);
-
-    request.onsuccess = () => {
-        loadBonsaisFromDB(); // Recharger après suppression
-    };
+    const request = transaction.objectStore(STORE_NAME).delete(id);
+    request.onsuccess = () => loadBonsaisFromDB();
 }
 
-// --- 6. INTERFACE UTILISATEUR ---
-
+// --- 5. INTERFACE ---
 function populateSpeciesSelect() {
     speciesSelect.innerHTML = '<option value="" disabled selected>Choisir une espèce...</option>';
-    speciesDB.forEach(species => {
-        const option = document.createElement('option');
-        option.value = species.id;
-        option.textContent = species.name;
-        speciesSelect.appendChild(option);
+    speciesDB.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id; opt.textContent = s.name;
+        speciesSelect.appendChild(opt);
     });
 }
 
 function renderCarousel(bonsais) {
-    bonsaiListEl.innerHTML = ''; 
+    bonsaiListEl.innerHTML = '';
+    countEl.textContent = bonsais.length ? `${bonsais.length} Arbres` : "Aucun arbre";
 
     if (bonsais.length === 0) {
-        countEl.textContent = "Aucun arbre. Cliquez sur +";
-        bonsaiListEl.innerHTML = '<div class="empty-msg" style="width:100%; text-align:center;">Votre collection est vide.<br>Ajoutez votre premier arbre !</div>';
+        bonsaiListEl.innerHTML = '<div class="empty-msg">Votre collection est vide.</div>';
         return;
-    } else {
-        countEl.textContent = `Vos ${bonsais.length} arbres se portent bien.`;
     }
 
-    bonsais.forEach((bonsai) => {
-        const speciesInfo = speciesDB.find(s => s.id === bonsai.speciesId) || { name: 'Inconnu', waterFreq: 3, pruning: '?' };
+    bonsais.forEach(bonsai => {
+        const species = speciesDB.find(s => s.id === bonsai.speciesId)?.name || 'Inconnu';
         
-        // Calcul date
-        const lastWater = new Date(bonsai.lastWatered);
-        const today = new Date();
-        const diffTime = Math.abs(today - lastWater);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        const nextWaterIn = speciesInfo.waterFreq - diffDays;
+        // Affichage des travaux
+        const workList = bonsai.tasks && bonsai.tasks.length > 0 ? bonsai.tasks.join(', ') : 'Aucun travaux';
+        const dateDisplay = bonsai.date ? new Date(bonsai.date).toLocaleDateString('fr-FR') : '--/--/----';
 
-        let waterLabel = nextWaterIn <= 0 ? "⚠️ Arroser !" : `💧 J-${nextWaterIn}`;
-        let statusClass = nextWaterIn <= 0 ? "info-pill urgent" : "info-pill";
-
-        // Carte HTML
         const card = document.createElement('div');
         card.className = 'bonsai-card';
-        // Note importante : on passe l'ID unique de la DB à la fonction delete
         card.innerHTML = `
-            <button class="delete-btn" onclick="confirmDelete(${bonsai.id})">×</button>
+            <div class="card-actions-top">
+                <button class="action-icon-btn btn-edit" onclick="editBonsai(${bonsai.id})">✎</button>
+                <button class="action-icon-btn btn-delete" onclick="confirmDelete(${bonsai.id})">×</button>
+            </div>
+            
             <div class="card-image">
                 <img src="${bonsai.image || 'img/placeholder.png'}" alt="${bonsai.name}">
             </div>
+            
             <div class="card-details">
                 <h2>${bonsai.name}</h2>
-                <p class="species-tag">${speciesInfo.name}</p>
-                <div class="actions">
-                    <span class="${statusClass}">${waterLabel}</span>
-                    <span class="info-pill">✂️ ${speciesInfo.pruning}</span>
+                <p class="species-tag">${species}</p>
+                
+                <div class="work-list">
+                    <p class="work-date">📅 ${dateDisplay}</p>
+                    <p class="work-items">${workList}</p>
                 </div>
             </div>
         `;
         bonsaiListEl.appendChild(card);
     });
     
-    // Espaceur
     const spacer = document.createElement('div');
     spacer.className = 'spacer';
     bonsaiListEl.appendChild(spacer);
 }
 
-// --- 7. GESTION DES CLICS ET FORMULAIRE ---
+// --- 6. FORMULAIRE & ÉDITION ---
 
-addBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-cancelBtn.addEventListener('click', () => {
-    modal.classList.add('hidden');
-    form.reset();
+// Ouvre le modal en mode "Création"
+addBtn.addEventListener('click', () => {
+    openModal();
 });
 
+function openModal(bonsaiToEdit = null) {
+    modal.classList.remove('hidden');
+    form.reset();
+    
+    if (bonsaiToEdit) {
+        // Mode ÉDITION
+        modalTitle.textContent = "Modifier l'arbre";
+        document.getElementById('edit-id').value = bonsaiToEdit.id;
+        document.getElementById('input-name').value = bonsaiToEdit.name;
+        document.getElementById('input-species').value = bonsaiToEdit.speciesId;
+        document.getElementById('input-date').value = bonsaiToEdit.date;
+        
+        // Cocher les cases
+        const checkboxes = document.querySelectorAll('input[name="travaux"]');
+        if (bonsaiToEdit.tasks) {
+            checkboxes.forEach(cb => {
+                if (bonsaiToEdit.tasks.includes(cb.value)) cb.checked = true;
+            });
+        }
+    } else {
+        // Mode CRÉATION
+        modalTitle.textContent = "Nouveau Bonsaï";
+        document.getElementById('edit-id').value = ""; // Pas d'ID
+    }
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    form.reset();
+}
+
+cancelBtn.addEventListener('click', closeModal);
+
+// Soumission (Création ou Modif)
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const id = document.getElementById('edit-id').value; // Vide si création, rempli si modif
     const name = document.getElementById('input-name').value;
     const speciesId = document.getElementById('input-species').value;
-    const date = document.getElementById('input-water').value;
+    const date = document.getElementById('input-date').value;
     const photoInput = document.getElementById('input-photo');
 
-    // Lecture de l'image
+    // Récupérer les travaux cochés
+    const checkedTasks = [];
+    document.querySelectorAll('input[name="travaux"]:checked').forEach(cb => {
+        checkedTasks.push(cb.value);
+    });
+
+    const bonsaiData = {
+        name: name,
+        speciesId: speciesId,
+        date: date,
+        tasks: checkedTasks
+    };
+
+    // Si on a un ID, on l'ajoute à l'objet pour qu'IndexedDB sache qu'on modifie
+    if (id) {
+        bonsaiData.id = parseInt(id); // Important : convertir en nombre
+    }
+
+    // Gestion Image
     if (photoInput.files && photoInput.files[0]) {
-        const file = photoInput.files[0];
         const reader = new FileReader();
-        
         reader.onload = function(evt) {
-            // On crée l'objet à sauvegarder
-            const newBonsai = {
-                name: name,
-                speciesId: speciesId,
-                lastWatered: date,
-                image: evt.target.result // Base64 stocké dans IndexedDB (OK pour gros fichiers)
-            };
-            addBonsaiToDB(newBonsai);
+            bonsaiData.image = evt.target.result;
+            saveBonsaiToDB(bonsaiData);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(photoInput.files[0]);
     } else {
-        const newBonsai = {
-            name: name,
-            speciesId: speciesId,
-            lastWatered: date,
-            image: null
-        };
-        addBonsaiToDB(newBonsai);
+        // Si on modifie sans changer la photo, il faut garder l'ancienne
+        if (id) {
+            // Récupérer l'ancienne image depuis la DB
+             const transaction = db.transaction([STORE_NAME], 'readonly');
+             const req = transaction.objectStore(STORE_NAME).get(parseInt(id));
+             req.onsuccess = (e) => {
+                 const oldData = e.target.result;
+                 bonsaiData.image = oldData.image; // On garde l'image existante
+                 saveBonsaiToDB(bonsaiData);
+             };
+        } else {
+            bonsaiData.image = null;
+            saveBonsaiToDB(bonsaiData);
+        }
     }
 });
 
-// Fonction globale pour la suppression
-window.confirmDelete = function(id) {
-    if(confirm("Supprimer cet arbre définitivement ?")) {
-        deleteBonsaiFromDB(id);
-    }
+// Fonctions Globales pour le HTML
+window.editBonsai = function(id) {
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const request = transaction.objectStore(STORE_NAME).get(id);
+    request.onsuccess = (e) => {
+        openModal(e.target.result);
+    };
 };
 
-// --- 8. INSTALLATION PWA ---
-let deferredPrompt;
-const installBtn = document.getElementById('install-btn');
+window.confirmDelete = function(id) {
+    if(confirm("Supprimer ?")) deleteBonsaiFromDB(id);
+};
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if(installBtn) installBtn.style.display = 'block';
-});
-
-if(installBtn) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt = null;
-            installBtn.style.display = 'none';
-        }
-    });
-}
-
-// Lancement
 init();
