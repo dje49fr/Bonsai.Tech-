@@ -1,17 +1,19 @@
-// --- 1. BASE DE DONNÉES DES ESPÈCES (Exemple réduit des 300) ---
-const speciesDB = [
-    { id: 'pin_blanc', name: 'Pin Blanc du Japon', waterFreq: 3, pruning: 'Octobre - Novembre' },
-    { id: 'erable', name: 'Érable du Japon', waterFreq: 2, pruning: 'Juin (Effeuillage)' },
-    { id: 'genevrier', name: 'Genévrier (Juniperus)', waterFreq: 4, pruning: 'Toute l\'année' },
-    { id: 'orme', name: 'Orme de Chine', waterFreq: 2, pruning: 'Mars - Avril' },
-    { id: 'ficus', name: 'Ficus Retusa', waterFreq: 3, pruning: 'Mai' },
-    { id: 'azalee', name: 'Azalée Satsuki', waterFreq: 1, pruning: 'Après floraison' },
-    { id: 'olivier', name: 'Olivier Sauvage', waterFreq: 5, pruning: 'Printemps' },
-    // ... Imaginez ici vos 300 autres entrées
-];
+// --- 1. CONFIGURATION DE LA BASE DE DONNÉES (IndexedDB) ---
+const DB_NAME = 'BonsaisDoDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'bonsais';
+let db;
 
-// --- 2. ÉTAT DE L'APPLICATION ---
-let myBonsais = JSON.parse(localStorage.getItem('bonsaisDoData')) || [];
+// --- 2. DONNÉES STATIQUES (Espèces) ---
+const speciesDB = [
+    { id: 'pin_blanc', name: 'Pin Blanc du Japon', waterFreq: 3, pruning: 'Octobre' },
+    { id: 'erable', name: 'Érable du Japon', waterFreq: 2, pruning: 'Juin' },
+    { id: 'genevrier', name: 'Genévrier', waterFreq: 4, pruning: 'Toute l\'année' },
+    { id: 'orme', name: 'Orme de Chine', waterFreq: 2, pruning: 'Mars' },
+    { id: 'ficus', name: 'Ficus', waterFreq: 3, pruning: 'Mai' },
+    { id: 'azalee', name: 'Azalée', waterFreq: 1, pruning: 'Après floraison' },
+    { id: 'olivier', name: 'Olivier', waterFreq: 5, pruning: 'Printemps' }
+];
 
 // --- 3. DOM ELEMENTS ---
 const bonsaiListEl = document.getElementById('bonsai-list');
@@ -22,14 +24,81 @@ const cancelBtn = document.getElementById('cancel-btn');
 const form = document.getElementById('bonsai-form');
 const speciesSelect = document.getElementById('input-species');
 
-// --- 4. INITIALISATION ---
+// --- 4. INITIALISATION DE LA DB ET DE L'APP ---
 function init() {
-    populateSpeciesSelect();
-    renderCarousel();
+    console.log("Ouverture de la base de données...");
+    
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    // Création de la structure si c'est la première fois (ou mise à jour)
+    request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+            // On crée une "table" 'bonsais' avec un ID automatique
+            db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        }
+    };
+
+    request.onsuccess = (event) => {
+        db = event.target.result;
+        console.log("Base de données connectée ! Stockage illimité activé.");
+        populateSpeciesSelect();
+        loadBonsaisFromDB(); // Charger les arbres
+    };
+
+    request.onerror = (event) => {
+        console.error("Erreur DB:", event.target.errorCode);
+        countEl.textContent = "Erreur de chargement de la base de données.";
+    };
 }
 
-// Remplir la liste déroulante avec la DB
+// --- 5. FONCTIONS DATABASE (CRUD) ---
+
+// A. Charger tous les arbres
+function loadBonsaisFromDB() {
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const objectStore = transaction.objectStore(STORE_NAME);
+    const request = objectStore.getAll();
+
+    request.onsuccess = (event) => {
+        const allBonsais = event.target.result;
+        renderCarousel(allBonsais);
+    };
+}
+
+// B. Ajouter un arbre
+function addBonsaiToDB(newBonsai) {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const objectStore = transaction.objectStore(STORE_NAME);
+    const request = objectStore.add(newBonsai);
+
+    request.onsuccess = () => {
+        form.reset();
+        modal.classList.add('hidden');
+        loadBonsaisFromDB(); // Recharger l'affichage
+        console.log("Arbre sauvegardé dans IndexedDB");
+    };
+
+    request.onerror = () => {
+        alert("Erreur lors de la sauvegarde.");
+    };
+}
+
+// C. Supprimer un arbre
+function deleteBonsaiFromDB(id) {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const objectStore = transaction.objectStore(STORE_NAME);
+    const request = objectStore.delete(id);
+
+    request.onsuccess = () => {
+        loadBonsaisFromDB(); // Recharger après suppression
+    };
+}
+
+// --- 6. INTERFACE UTILISATEUR ---
+
 function populateSpeciesSelect() {
+    speciesSelect.innerHTML = '<option value="" disabled selected>Choisir une espèce...</option>';
     speciesDB.forEach(species => {
         const option = document.createElement('option');
         option.value = species.id;
@@ -38,72 +107,65 @@ function populateSpeciesSelect() {
     });
 }
 
-// --- 5. RENDU DU CAROUSEL ---
-function renderCarousel() {
-    bonsaiListEl.innerHTML = ''; // Nettoyer
+function renderCarousel(bonsais) {
+    bonsaiListEl.innerHTML = ''; 
 
-    // Mise à jour du compteur
-    const count = myBonsais.length;
-    countEl.textContent = count > 0 ? `Vos ${count} arbres se portent bien.` : "Aucun arbre. Ajoutez-en un !";
-
-    if (count === 0) {
-        bonsaiListEl.innerHTML = '<div class="empty-msg">Appuyez sur + pour commencer</div>';
+    if (bonsais.length === 0) {
+        countEl.textContent = "Aucun arbre. Cliquez sur +";
+        bonsaiListEl.innerHTML = '<div class="empty-msg" style="width:100%; text-align:center;">Votre collection est vide.<br>Ajoutez votre premier arbre !</div>';
         return;
+    } else {
+        countEl.textContent = `Vos ${bonsais.length} arbres se portent bien.`;
     }
 
-    myBonsais.forEach((bonsai, index) => {
-        // Trouver les infos de l'espèce dans la DB
+    bonsais.forEach((bonsai) => {
         const speciesInfo = speciesDB.find(s => s.id === bonsai.speciesId) || { name: 'Inconnu', waterFreq: 3, pruning: '?' };
         
-        // Calcul arrosage (Simplifié)
+        // Calcul date
         const lastWater = new Date(bonsai.lastWatered);
-        const nextWater = new Date(lastWater);
-        nextWater.setDate(lastWater.getDate() + speciesInfo.waterFreq);
-        
         const today = new Date();
-        const diffTime = nextWater - today;
+        const diffTime = Math.abs(today - lastWater);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        
-        let waterStatusHTML = '';
-        if (diffDays <= 0) {
-            waterStatusHTML = `<span class="info-pill urgent">💧 Arroser !</span>`;
-        } else {
-            waterStatusHTML = `<span class="info-pill">💧 J-${diffDays}</span>`;
-        }
+        const nextWaterIn = speciesInfo.waterFreq - diffDays;
 
-        // Création de la carte HTML
+        let waterLabel = nextWaterIn <= 0 ? "⚠️ Arroser !" : `💧 J-${nextWaterIn}`;
+        let statusClass = nextWaterIn <= 0 ? "info-pill urgent" : "info-pill";
+
+        // Carte HTML
         const card = document.createElement('div');
         card.className = 'bonsai-card';
+        // Note importante : on passe l'ID unique de la DB à la fonction delete
         card.innerHTML = `
-            <button class="delete-btn" onclick="deleteBonsai(${index})">&times;</button>
+            <button class="delete-btn" onclick="confirmDelete(${bonsai.id})">×</button>
             <div class="card-image">
-                <img src="${bonsai.image || 'https://via.placeholder.com/300x350/E0D6C8/333?text=Bonsai'}" alt="${bonsai.name}">
+                <img src="${bonsai.image || 'img/placeholder.png'}" alt="${bonsai.name}">
             </div>
             <div class="card-details">
                 <h2>${bonsai.name}</h2>
                 <p class="species-tag">${speciesInfo.name}</p>
                 <div class="actions">
-                    ${waterStatusHTML}
+                    <span class="${statusClass}">${waterLabel}</span>
                     <span class="info-pill">✂️ ${speciesInfo.pruning}</span>
                 </div>
             </div>
         `;
         bonsaiListEl.appendChild(card);
     });
-
-    // Ajouter l'espaceur final
+    
+    // Espaceur
     const spacer = document.createElement('div');
     spacer.className = 'spacer';
     bonsaiListEl.appendChild(spacer);
 }
 
-// --- 6. GESTION DES ÉVÉNEMENTS ---
+// --- 7. GESTION DES CLICS ET FORMULAIRE ---
 
-// Ouvrir/Fermer Modal
 addBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+cancelBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    form.reset();
+});
 
-// Sauvegarder un nouveau bonsaï
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -112,45 +174,59 @@ form.addEventListener('submit', (e) => {
     const date = document.getElementById('input-water').value;
     const photoInput = document.getElementById('input-photo');
 
-    // Gestion simple de l'image (File Reader pour afficher en local)
-    let imageBase64 = null;
-    
+    // Lecture de l'image
     if (photoInput.files && photoInput.files[0]) {
+        const file = photoInput.files[0];
         const reader = new FileReader();
-        reader.onload = function(e) {
-            imageBase64 = e.target.result;
-            saveBonsaiData(name, speciesId, date, imageBase64);
+        
+        reader.onload = function(evt) {
+            // On crée l'objet à sauvegarder
+            const newBonsai = {
+                name: name,
+                speciesId: speciesId,
+                lastWatered: date,
+                image: evt.target.result // Base64 stocké dans IndexedDB (OK pour gros fichiers)
+            };
+            addBonsaiToDB(newBonsai);
         };
-        reader.readAsDataURL(photoInput.files[0]);
+        reader.readAsDataURL(file);
     } else {
-        saveBonsaiData(name, speciesId, date, null);
+        const newBonsai = {
+            name: name,
+            speciesId: speciesId,
+            lastWatered: date,
+            image: null
+        };
+        addBonsaiToDB(newBonsai);
     }
 });
 
-function saveBonsaiData(name, speciesId, date, image) {
-    const newBonsai = {
-        name: name,
-        speciesId: speciesId,
-        lastWatered: date,
-        image: image // Attention : localStorage a une limite de taille, pour une vraie app il faudrait IndexedDB
-    };
-
-    myBonsais.push(newBonsai);
-    localStorage.setItem('bonsaisDoData', JSON.stringify(myBonsais));
-    
-    form.reset();
-    modal.classList.add('hidden');
-    renderCarousel();
-}
-
-// Supprimer un bonsaï (Fonction globale pour être accessible dans le HTML)
-window.deleteBonsai = function(index) {
-    if(confirm('Voulez-vous supprimer cet arbre ?')) {
-        myBonsais.splice(index, 1);
-        localStorage.setItem('bonsaisDoData', JSON.stringify(myBonsais));
-        renderCarousel();
+// Fonction globale pour la suppression
+window.confirmDelete = function(id) {
+    if(confirm("Supprimer cet arbre définitivement ?")) {
+        deleteBonsaiFromDB(id);
     }
 };
 
-// Lancer l'app
+// --- 8. INSTALLATION PWA ---
+let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if(installBtn) installBtn.style.display = 'block';
+});
+
+if(installBtn) {
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+        }
+    });
+}
+
+// Lancement
 init();
