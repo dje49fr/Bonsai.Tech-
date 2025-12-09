@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonsaïs Do</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FDFBF7">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="top-bar">
+            <button class="icon-btn">&#8592;</button> <button class="icon-btn">&#128172;</button> </div>
+        <div class="intro">
+            <h1>Mes Bonsaïs</h1>
+            <p>Glissez pour voir vos 12 arbres</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="carousel-container">
+            
+            <div class="bonsai-card">
+                <div class="card-image">
+                    <img src="img/pin-blanc.jpg" alt="Pin Blanc Japonais" onerror="this.src='https://via.placeholder.com/300x350/E0D6C8/333?text=Pin+Blanc'">
+                </div>
+                <div class="card-details">
+                    <h2>Pin Blanc Japonais</h2>
+                    <p class="status">En pleine forme</p>
+                    <div class="actions">
+                        <span>💧 J-2</span>
+                        <span>✂️ Octobre</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bonsai-card">
+                <div class="card-image">
+                    <img src="img/erable.jpg" alt="Érable du Japon" onerror="this.src='https://via.placeholder.com/300x350/8FB358/FFF?text=Erable'">
+                </div>
+                <div class="card-details">
+                    <h2>Érable du Japon</h2>
+                    <p class="status">Besoin d'eau</p>
+                    <div class="actions">
+                        <span style="color:red;">💧 Aujourd'hui</span>
+                        <span>✂️ Mars</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bonsai-card">
+                <div class="card-image">
+                    <img src="img/genevrier.jpg" alt="Genévrier" onerror="this.src='https://via.placeholder.com/300x350/E0D6C8/333?text=Genevrier'">
+                </div>
+                <div class="card-details">
+                    <h2>Genévrier</h2>
+                    <p class="status">Dormance</p>
+                    <div class="actions">
+                        <span>💧 J-5</span>
+                        <span>✂️ Juin</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+
+        </div>
+    </main>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+</html>
