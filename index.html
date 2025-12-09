@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bonsaï Niwa</title>
     <link rel="manifest" href="manifest.json">
-    
     <meta name="theme-color" content="#CFDBC5">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,10 +19,8 @@
             <h1>Bonsaï Niwa</h1>
             <p id="compteur-arbres">Chargement...</p>
         </div>
-
         <div class="header-actions">
             <button id="install-btn" class="install-btn" style="display: none;">⬇</button>
-            
             <button id="add-btn" class="add-btn-black" aria-label="Ajouter">+</button>
         </div>
     </header>
@@ -35,26 +32,45 @@
 
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2 class="modal-title">Nouveau Bonsaï</h2>
+            <h2 class="modal-title" id="modal-title">Nouveau Bonsaï</h2>
+            
             <form id="bonsai-form">
+                <input type="hidden" id="edit-id">
+
                 <div class="form-group">
                     <label for="input-name">Nom de l'arbre</label>
                     <input type="text" id="input-name" placeholder="Ex: Mon beau Pin" required>
                 </div>
+
                 <div class="form-group">
                     <label for="input-species">Espèce</label>
                     <select id="input-species" required>
                         <option value="" disabled selected>Choisir une espèce...</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="input-water">Dernier arrosage</label>
-                    <input type="date" id="input-water" required>
+                    <label>Travaux effectués (Choix multiples)</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="travaux" value="Taille"> Taille</label>
+                        <label><input type="checkbox" name="travaux" value="Rempotage"> Rempotage</label>
+                        <label><input type="checkbox" name="travaux" value="Fertilisation"> Fertilisation</label>
+                        <label><input type="checkbox" name="travaux" value="Défoliation"> Défoliation</label>
+                        <label><input type="checkbox" name="travaux" value="Ligaturage"> Ligaturage</label>
+                        <label><input type="checkbox" name="travaux" value="Autre"> Autre</label>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label for="input-photo">Photo</label>
+                    <label for="input-date">Date des travaux</label>
+                    <input type="date" id="input-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="input-photo">Photo (Optionnel)</label>
                     <input type="file" id="input-photo" accept="image/*">
                 </div>
+
                 <div class="modal-actions">
                     <button type="button" id="cancel-btn" class="btn-secondary">Annuler</button>
                     <button type="submit" class="btn-primary">Enregistrer</button>
