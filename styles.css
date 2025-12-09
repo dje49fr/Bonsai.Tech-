@@ -1,143 +1,124 @@
 /* --- RESET ET BASES --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background-color: #FDFBF7; /* Beige Crème */
+    background-color: #FDFBF7;
     font-family: 'Lato', sans-serif;
-    color: #333;
+    color: #4A4A4A;
     height: 100vh;
-    overflow: hidden; /* On gère le scroll dans le main */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
 /* --- HEADER --- */
-header {
-    padding: 20px;
-    flex-shrink: 0;
-}
+header { padding: 20px; flex-shrink: 0; }
+.top-bar { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.icon-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; }
+.intro h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #2c2c2c; }
+.intro p { color: #888; margin-top: 5px; font-size: 0.9rem; }
 
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.icon-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #666;
-}
-
-.intro h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    color: #1a1a1a;
-}
-
-.intro p {
-    color: #888;
-    margin-top: 5px;
-}
-
-/* --- CAROUSEL (LA PARTIE IMPORTANTE) --- */
-main {
-    flex-grow: 1;
-    display: flex;
-    align-items: center; /* Centre verticalement */
-}
+/* --- CAROUSEL SNAP --- */
+main { flex-grow: 1; display: flex; align-items: center; position: relative; }
 
 .carousel-container {
     display: flex;
-    overflow-x: auto; /* Scroll horizontal */
-    
-    /* C'est cette ligne qui crée l'effet de switch/verrouillage */
-    scroll-snap-type: x mandatory; 
-    
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* L'effet aimant */
     gap: 20px;
-    padding: 0 24px; /* Marge sur les côtés */
+    padding: 0 24px;
     width: 100%;
-    padding-bottom: 30px;
-    
-    /* Masquer la barre de défilement pour faire propre */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE */
+    height: 80%; /* Hauteur occupée */
+    align-items: center;
+    scrollbar-width: none;
 }
-.carousel-container::-webkit-scrollbar { 
-    display: none; /* Chrome/Safari */
-}
+.carousel-container::-webkit-scrollbar { display: none; }
 
-/* --- LES FICHES BONSAÏS --- */
+/* --- CARTE BONSAÏ --- */
 .bonsai-card {
-    /* La carte prend 80% de la largeur de l'écran */
-    min-width: 80vw; 
-    
-    /* Verrouille la carte au centre quand on lâche le doigt */
-    scroll-snap-align: center; 
-    
+    min-width: 80vw;
+    scroll-snap-align: center;
     background: white;
     border-radius: 20px;
     padding: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease;
-    
     display: flex;
     flex-direction: column;
+    height: 450px; /* Hauteur fixe pour uniformité */
+    position: relative;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255,255,255,0.8);
+    border: none; color: red;
+    font-size: 1.2rem; cursor: pointer;
+    border-radius: 50%; width: 30px; height: 30px;
 }
 
 .card-image {
     background-color: #F0EFE9;
-    height: 350px; /* Hauteur de l'image */
+    flex-grow: 1;
     border-radius: 15px;
     overflow: hidden;
     margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
+}
+.card-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-details h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 5px; color: #1a1a1a; }
+.species-tag { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+
+.actions { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px; margin-top: auto; }
+.info-pill { background: #f4f4f4; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; }
+.urgent { color: #d9534f; background: #fce8e8; } /* Rouge si arrosage dû */
+
+.spacer { min-width: 5px; } /* Pour scroller jusqu'au bout */
+.empty-msg { text-align: center; width: 100%; color: #999; }
+
+/* --- BOUTON AJOUT (+) --- */
+.fab {
+    position: absolute;
+    bottom: 30px; right: 30px;
+    width: 60px; height: 60px;
+    background-color: #2c2c2c;
+    color: #FDFBF7;
+    border-radius: 50%;
+    border: none;
+    font-size: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 10;
 }
 
-.card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* --- MODAL (Formulaire) --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+}
+.hidden { display: none; }
+
+.modal-content {
+    background: #FDFBF7;
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+}
+.modal-title { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; }
+.form-group input, .form-group select {
+    width: 100%; padding: 12px;
+    border: 1px solid #ddd; border-radius: 8px;
+    background: white; font-family: 'Lato', sans-serif;
 }
 
-.card-details h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-}
-
-.status {
-    color: #8FB358; /* Vert nature */
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.actions {
-    display: flex;
-    gap: 15px;
-    margin-top: auto; /* Pousse vers le bas */
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-}
-
-.actions span {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* Petit espaceur pour pouvoir scroller jusqu'au bout à droite */
-.spacer {
-    min-width: 5px;
-}
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-primary { flex: 1; background: #2c2c2c; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; }
+.btn-secondary { flex: 1; background: transparent; border: 1px solid #ccc; padding: 12px; border-radius: 8px; }
