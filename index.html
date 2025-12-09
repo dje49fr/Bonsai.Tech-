@@ -20,7 +20,10 @@
             <p id="compteur-arbres">Chargement...</p>
         </div>
         <div class="header-actions">
+            <button id="calendar-btn" class="icon-btn-header" aria-label="Calendrier">📅</button>
+            
             <button id="install-btn" class="install-btn" style="display: none;">⬇</button>
+            
             <button id="add-btn" class="add-btn-black" aria-label="Ajouter">+</button>
         </div>
     </header>
@@ -50,24 +53,39 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Travaux effectués (Choix multiples)</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="travaux" value="Taille"> Taille</label>
-                        <label><input type="checkbox" name="travaux" value="Rempotage"> Rempotage</label>
-                        <label><input type="checkbox" name="travaux" value="Fertilisation"> Fertilisation</label>
-                        <label><input type="checkbox" name="travaux" value="Défoliation"> Défoliation</label>
-                        <label><input type="checkbox" name="travaux" value="Ligaturage"> Ligaturage</label>
-                        <label><input type="checkbox" name="travaux" value="Autre"> Autre</label>
-                    </div>
-                </div>
+                    <label>Travaux effectués & Dates</label>
+                    <div class="tasks-container">
+                        
+                        <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Taille"> Taille</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
 
-                <div class="form-group">
-                    <label for="input-date">Date des travaux</label>
-                    <input type="date" id="input-date" required>
+                        <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Rempotage"> Rempotage</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
+
+                        <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Fertilisation"> Fertilisation</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
+
+                        <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Ligaturage"> Ligaturage</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
+                        
+                        <div class="task-row">
+                            <label><input type="checkbox" class="task-check" value="Traitement"> Traitement</label>
+                            <input type="date" class="task-date hidden">
+                        </div>
+
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="input-photo">Photo (Optionnel)</label>
+                    <label for="input-photo">Photo</label>
                     <input type="file" id="input-photo" accept="image/*">
                 </div>
 
@@ -76,6 +94,17 @@
                     <button type="submit" class="btn-primary">Enregistrer</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="calendar-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="modal-title">📅 Travaux à venir</h2>
+            <div id="calendar-list" class="calendar-list">
+                </div>
+            <div class="modal-actions">
+                <button type="button" id="close-calendar" class="btn-primary">Fermer</button>
+            </div>
         </div>
     </div>
 
