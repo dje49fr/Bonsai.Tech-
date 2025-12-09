@@ -1,20 +1,15 @@
 {
-  "name": "Bonsaïs Do",
-  "short_name": "Bonsaïs",
-  "start_url": "./index.html",
+  "name": "Bonsaï Niwa",
+  "short_name": "Niwa",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#FDFBF7",
-  "theme_color": "#FDFBF7",
+  "background_color": "#CFDBC5",
+  "theme_color": "#CFDBC5",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
       "type": "image/png"
     }
   ]
