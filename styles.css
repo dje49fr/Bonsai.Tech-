@@ -1,31 +1,38 @@
-/* --- RESET ET BASES --- */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* --- 1. RESET ET BASES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    background-color: #FDFBF7;
+    background-color: #FDFBF7; /* Fond Beige Crème */
     font-family: 'Lato', sans-serif;
     color: #4A4A4A;
-    height: 100vh;
-    overflow: hidden;
+    height: 100vh; /* Prend toute la hauteur de l'écran */
+    overflow: hidden; /* Empêche le scroll global (géré dans le main) */
     display: flex;
     flex-direction: column;
 }
 
-/* --- HEADER (TITRE + BOUTON) --- */
+/* --- 2. EN-TÊTE (HEADER) --- */
 .main-header {
     padding: 25px 24px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Ne rétrécit pas */
     display: flex;
-    justify-content: space-between; /* Ecarte le titre à gauche et le bouton à droite */
-    align-items: center; 
+    justify-content: space-between; /* Ecarte le texte à gauche et le bouton à droite */
+    align-items: center; /* Centre verticalement */
+    z-index: 10;
 }
 
+/* Bloc Titre */
 .header-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem; /* Titre agrandi comme demandé */
+    font-family: 'Playfair Display', serif; /* Police élégante */
+    font-size: 2.8rem; /* Titre agrandi */
     color: #2c2c2c;
     line-height: 1;
     margin-bottom: 5px;
+    letter-spacing: -0.5px;
 }
 
 .header-text p {
@@ -34,36 +41,37 @@ body {
     padding-left: 2px;
 }
 
+/* Bloc Actions (Boutons droite) */
 .header-actions {
     display: flex;
     gap: 15px;
     align-items: center;
 }
 
-/* --- LE BOUTON + NOIR (Style corrigé) --- */
+/* --- 3. LE BOUTON D'AJOUT (+) --- */
 .add-btn-black {
     width: 60px;
     height: 60px;
-    background-color: #1a1a1a; /* Noir */
+    background-color: #1a1a1a; /* Noir Profond */
     color: #FFFFFF;
     border-radius: 50%; /* Rond parfait */
     border: none;
-    font-size: 2rem;
+    font-size: 2.2rem; /* Taille du signe + */
     font-weight: 300;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    flex-shrink: 0; /* Empêche le bouton de s'écraser */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Ombre sous le bouton */
     transition: transform 0.2s;
+    flex-shrink: 0; /* Empêche le bouton de s'écraser sur petits écrans */
 }
 
 .add-btn-black:active {
-    transform: scale(0.95);
+    transform: scale(0.95); /* Petit effet de rebond au clic */
 }
 
-/* Bouton install discret */
+/* Bouton d'installation (discret) */
 .install-btn {
     background: transparent;
     border: 1px solid #ccc;
@@ -72,97 +80,217 @@ body {
     display: flex; align-items: center; justify-content: center;
     color: #555;
     font-weight: bold;
+    font-size: 1rem;
 }
 
-/* --- CAROUSEL --- */
-main { flex-grow: 1; display: flex; align-items: center; position: relative; }
+/* --- 4. CAROUSEL HORIZONTAL --- */
+main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Centre les cartes verticalement */
+    position: relative;
+    padding-bottom: 20px;
+}
 
 .carousel-container {
     display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    overflow-x: auto; /* Scroll horizontal */
+    scroll-snap-type: x mandatory; /* Effet "Aimant" */
     gap: 20px;
-    padding: 0 24px;
+    padding: 0 24px; /* Marge sur les côtés */
     width: 100%;
-    height: 80%;
+    height: auto;
     align-items: center;
-    scrollbar-width: none;
+    
+    /* Masquer la barre de scroll */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
-.carousel-container::-webkit-scrollbar { display: none; }
+.carousel-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
 
-/* --- CARTE BONSAÏ --- */
+/* --- 5. CARTES BONSAÏ (FICHES) --- */
 .bonsai-card {
-    min-width: 80vw;
-    scroll-snap-align: center;
+    min-width: 80vw; /* Largeur : 80% de l'écran */
+    scroll-snap-align: center; /* Se verrouille au centre */
     background: white;
     border-radius: 20px;
     padding: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    
+    /* EFFET D'OMBRE (RELIEF DEMANDÉ) */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
+    
     display: flex;
     flex-direction: column;
-    height: 460px; 
+    height: 480px; /* Hauteur fixe de la carte */
     position: relative;
+    transition: transform 0.3s ease;
 }
 
+/* Bouton supprimer (Croix) */
 .delete-btn {
     position: absolute;
     top: 15px; right: 15px;
-    background: rgba(255,255,255,0.9);
-    border: none; color: #d9534f;
-    font-size: 1.5rem; cursor: pointer;
-    border-radius: 50%; width: 35px; height: 35px;
+    background: rgba(255,255,255,0.95);
+    border: none;
+    color: #d9534f; /* Rouge */
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 35px; height: 35px;
     z-index: 5;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
 }
 
+/* Image de l'arbre */
 .card-image {
-    background-color: #F0EFE9;
-    flex-grow: 1;
+    background-color: #F0EFE9; /* Fond gris/beige derrière l'image */
+    flex-grow: 1; /* Prend tout l'espace disponible */
     border-radius: 15px;
     overflow: hidden;
     margin-bottom: 15px;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.card-image img { width: 100%; height: 100%; object-fit: cover; }
 
-.card-details h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 5px; color: #1a1a1a; }
-.species-tag { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Remplit bien la case */
+}
 
-.actions { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px; margin-top: auto; }
-.info-pill { background: #f4f4f4; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; }
-.urgent { color: #d9534f; background: #fce8e8; } 
+/* Détails texte */
+.card-details h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+    color: #1a1a1a;
+}
 
+.species-tag {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+/* Actions en bas de carte */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 15px;
+    margin-top: auto;
+}
+
+.info-pill {
+    background: #f4f4f4;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555;
+}
+
+.urgent {
+    color: #d9534f;
+    background: #fce8e8;
+}
+
+/* Espaceur et Message vide */
 .spacer { min-width: 5px; }
-.empty-msg { text-align: center; width: 100%; color: #999; line-height: 1.6; }
+.empty-msg { 
+    text-align: center; 
+    width: 100%; 
+    color: #999; 
+    line-height: 1.6;
+    font-style: italic;
+}
 
-/* --- MODAL (Formulaire) --- */
+/* --- 6. MODAL (FORMULAIRE) --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6); /* Fond sombre flouté */
     z-index: 100;
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(4px);
 }
+
 .hidden { display: none; }
 
 .modal-content {
     background: #FDFBF7;
-    padding: 25px;
-    border-radius: 20px;
+    padding: 30px;
+    border-radius: 24px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
-.modal-title { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
 
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; }
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #2c2c2c;
+    text-align: center;
+}
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #444;
+}
+
 .form-group input, .form-group select {
-    width: 100%; padding: 12px;
-    border: 1px solid #ddd; border-radius: 8px;
-    background: white; font-family: 'Lato', sans-serif;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
 }
 
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-.btn-primary { flex: 1; background: #2c2c2c; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.btn-secondary { flex: 1; background: transparent; border: 1px solid #ccc; padding: 12px; border-radius: 8px; cursor: pointer;}
+.form-group input:focus, .form-group select:focus {
+    border-color: #4A4A4A;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-primary {
+    flex: 1;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+}
