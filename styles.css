@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #FDFBF7; /* Le fond général reste Beige Crème pour le contraste */
+    background-color: #FFFFFF; /* <-- FOND BLANC PUR */
     font-family: 'Lato', sans-serif;
     color: #4A4A4A;
     height: 100vh;
@@ -15,20 +15,20 @@ body {
     flex-direction: column;
 }
 
-/* --- 2. EN-TÊTE (HEADER) - BANDE VERT PÂLE --- */
+/* --- 2. EN-TÊTE (HEADER) --- */
 .main-header {
-    background-color: #E1E8DB; /* <-- ICI : LA BANDE VERT PÂLE */
-    padding: 30px 24px 40px 24px; /* Un peu plus d'espace en bas */
+    background-color: #CFDBC5; /* <-- VERT SAUGE PLUS SOUTENU */
+    padding: 30px 24px 40px 24px;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 10;
     
-    /* Petit arrondi en bas pour le style (vous pouvez enlever si vous préférez tout droit) */
     border-bottom-left-radius: 30px; 
     border-bottom-right-radius: 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03); /* Légère ombre sous le bandeau */
+    /* Ombre légère sous le vert pour le détacher du blanc */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
 }
 
 /* Bloc Titre */
@@ -41,7 +41,7 @@ body {
 }
 
 .header-text p {
-    color: #5d6658; /* Texte un peu plus vert foncé pour aller avec le fond */
+    color: #55604E; /* Texte adapté au nouveau vert */
     font-size: 0.9rem;
     padding-left: 2px;
 }
@@ -57,7 +57,7 @@ body {
 .add-btn-black {
     width: 60px;
     height: 60px;
-    background-color: #1a1a1a; /* Noir */
+    background-color: #1a1a1a;
     color: #FFFFFF;
     border-radius: 50%;
     border: none;
@@ -67,7 +67,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     transition: transform 0.2s;
     flex-shrink: 0;
 }
@@ -77,8 +77,8 @@ body {
 }
 
 .install-btn {
-    background: rgba(255,255,255,0.5); /* Semi-transparent sur le fond vert */
-    border: 1px solid #aaa;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #999;
     border-radius: 8px;
     width: 35px; height: 35px;
     display: flex; align-items: center; justify-content: center;
@@ -92,8 +92,6 @@ main {
     display: flex;
     align-items: center;
     position: relative;
-    /* On remonte un peu le main pour que les cartes chevauchent légèrement le header ? 
-       Non, restons simple pour l'instant */
 }
 
 .carousel-container {
@@ -109,27 +107,30 @@ main {
 }
 .carousel-container::-webkit-scrollbar { display: none; }
 
-/* --- 5. CARTES BONSAÏ (FICHES BLANCHES) --- */
+/* --- 5. CARTES BONSAÏ --- */
 .bonsai-card {
     min-width: 80vw;
     scroll-snap-align: center;
     
-    background-color: #FFFFFF; /* <-- ICI : FICHE BIEN BLANCHE */
+    background-color: #FFFFFF; /* Carte Blanche */
     
     border-radius: 20px;
     padding: 15px;
     
-    /* Ombre profonde demandée */
-    box-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
+    /* <-- OMBRE A 17% COMME DEMANDÉ --> */
+    /* La première valeur gère l'ombre principale (0.17), la seconde l'ombre proche (0.08) */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.17), 0 5px 15px rgba(0,0,0,0.08);
     
     display: flex;
     flex-direction: column;
     height: 480px;
     position: relative;
     transition: transform 0.3s ease;
+    
+    /* Petite bordure très fine optionnelle pour aider le contraste blanc sur blanc */
+    border: 1px solid rgba(0,0,0,0.02);
 }
 
-/* Croix de suppression */
 .delete-btn {
     position: absolute;
     top: 15px; right: 15px;
@@ -141,12 +142,12 @@ main {
     border-radius: 50%;
     width: 35px; height: 35px;
     z-index: 5;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex; align-items: center; justify-content: center;
 }
 
 .card-image {
-    background-color: #F0EFE9;
+    background-color: #F7F7F7; /* Gris très très pâle pour l'emplacement image */
     flex-grow: 1;
     border-radius: 15px;
     overflow: hidden;
@@ -180,15 +181,15 @@ main {
 }
 
 .info-pill {
-    background: #f4f4f4; /* Gris très clair pour contraster avec le blanc */
+    background: #F5F5F5;
     padding: 8px 14px;
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 700;
-    color: #555;
+    color: #444;
 }
 
-.urgent { color: #d9534f; background: #fce8e8; }
+.urgent { color: #d9534f; background: #FFF0F0; }
 
 .spacer { min-width: 5px; }
 .empty-msg { text-align: center; width: 100%; color: #999; }
@@ -204,12 +205,12 @@ main {
 .hidden { display: none; }
 
 .modal-content {
-    background: #FDFBF7;
+    background: #FFFFFF; /* Fond modal blanc */
     padding: 30px;
     border-radius: 24px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
 }
 
 .modal-title {
@@ -225,10 +226,10 @@ main {
 .form-group input, .form-group select {
     width: 100%; padding: 14px;
     border: 1px solid #e0e0e0; border-radius: 12px;
-    background: white; font-family: 'Lato', sans-serif;
+    background: #FAFAFA; font-family: 'Lato', sans-serif;
     outline: none;
 }
-.form-group input:focus { border-color: #4A4A4A; }
+.form-group input:focus { border-color: #CFDBC5; background: white; }
 
 .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
 .btn-primary { flex: 1; background: #1a1a1a; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; }
