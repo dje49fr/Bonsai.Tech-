@@ -14,38 +14,33 @@ body {
 /* --- HEADER --- */
 .main-header {
     background-color: #CFDBC5;
-    padding: 20px 20px 30px 20px;
+    padding: 20px 24px 30px 24px;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 10;
-    border-bottom-left-radius: 25px; 
-    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 30px; 
+    border-bottom-right-radius: 30px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.header-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem; /* Un peu plus petit pour laisser de la place */
-    color: #2c2c2c;
-    line-height: 1;
-    margin-bottom: 5px;
-}
-.header-text p { color: #55604E; font-size: 0.8rem; padding-left: 2px; }
-.header-actions { display: flex; gap: 10px; align-items: center; }
+.header-text h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #2c2c2c; line-height: 1; margin-bottom: 5px; }
+.header-text p { color: #55604E; font-size: 0.9rem; padding-left: 2px; }
+.header-actions { display: flex; gap: 12px; align-items: center; }
 
-/* BOUTON + */
+/* Boutons Header */
 .add-btn-black {
-    width: 50px; height: 50px;
-    background-color: #1a1a1a; color: white;
-    border-radius: 50%; border: none;
-    font-size: 2rem; font-weight: 300;
+    width: 60px; height: 60px; background-color: #1a1a1a; color: white;
+    border-radius: 50%; border: none; font-size: 2.2rem; font-weight: 300;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); flex-shrink: 0;
 }
-.add-btn-black:active { transform: scale(0.95); }
+.icon-btn-header {
+    background: white; border: none; width: 45px; height: 45px; border-radius: 50%;
+    font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
 /* --- CAROUSEL --- */
 main { flex-grow: 1; display: flex; align-items: center; position: relative; }
@@ -54,128 +49,131 @@ main { flex-grow: 1; display: flex; align-items: center; position: relative; }
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 15px; /* Espace réduit entre les cartes */
-    padding: 0 20px;
+    gap: 20px;
+    padding: 0 24px; /* On enlève le padding bottom pour coller au design */
     width: 100%;
     align-items: center;
     scrollbar-width: none;
 }
 .carousel-container::-webkit-scrollbar { display: none; }
 
-/* --- CARTES BONSAÏ (VERSION PETITE) --- */
+/* --- FICHE BONSAÏ (CENTRÉE) --- */
 .bonsai-card {
-    /* 44vw permet d'en mettre 2 côte à côte (44+44 = 88% + les marges) */
-    min-width: 44vw; 
-    width: 44vw;
+    min-width: 85vw; /* Fiche large centrée */
     scroll-snap-align: center;
-    
     background-color: #FFFFFF;
-    border-radius: 15px;
-    padding: 10px; /* Padding réduit */
+    border-radius: 20px;
     
-    box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 2px 5px rgba(0,0,0,0.05);
+    /* OMBRE A 22% */
+    box-shadow: 0 25px 50px rgba(0,0,0,0.22);
     
     display: flex;
     flex-direction: column;
-    height: 380px; /* Hauteur réduite aussi */
+    height: 520px; /* Hauteur fixe */
     position: relative;
-    border: 1px solid rgba(0,0,0,0.02);
+    overflow: hidden; /* Pour que les bandes ne dépassent pas */
 }
 
-/* Boutons Action sur la carte (Supprimer et Editer) */
-.card-actions-top {
-    position: absolute;
-    top: 8px; right: 8px;
+/* 1. BANDE BLANCHE HAUT (ACTIONS) */
+.card-header-strip {
+    height: 50px;
+    background: #FFFFFF;
     display: flex;
-    gap: 5px;
-    z-index: 5;
+    justify-content: flex-end; /* Icônes à droite */
+    align-items: center;
+    padding: 0 15px;
+    border-bottom: 1px solid #f5f5f5;
 }
+.action-btn {
+    background: none; border: none; font-size: 1.4rem; cursor: pointer; margin-left: 15px; color: #666;
+}
+.btn-delete { color: #d9534f; }
 
-.action-icon-btn {
-    background: rgba(255,255,255,0.9);
-    border: none;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-size: 1rem;
+/* 2. CONTENU MILIEU */
+.card-body {
+    flex-grow: 1;
+    padding: 0;
+    display: flex; flex-direction: column;
 }
-.btn-edit { color: #4A90E2; } /* Bleu pour éditer */
-.btn-delete { color: #d9534f; } /* Rouge pour supprimer */
 
 .card-image {
+    height: 250px; /* Image grande */
     background-color: #F7F7F7;
-    height: 180px; /* Hauteur image fixe */
-    border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 10px;
     display: flex; align-items: center; justify-content: center;
 }
 .card-image img { width: 100%; height: 100%; object-fit: cover; }
 
-.card-details h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; /* Texte plus petit */
-    margin-bottom: 2px;
-    color: #1a1a1a;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+.card-info { padding: 15px 20px; }
+.card-info h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 5px; color: #1a1a1a; }
+.species-tag { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
 
-.species-tag {
-    font-size: 0.7rem; color: #888;
-    text-transform: uppercase; margin-bottom: 10px;
+/* Liste travaux (scrollable si trop longue) */
+.history-list {
+    max-height: 80px; overflow-y: auto;
+    font-size: 0.85rem; color: #555;
+    border-top: 1px solid #eee; padding-top: 10px;
 }
+.history-item { margin-bottom: 4px; display: flex; justify-content: space-between; }
+.history-date { font-weight: bold; color: #444; }
 
-/* Zone des travaux */
-.work-list {
-    margin-top: auto;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 8px;
+/* 3. BANDE BAS (CONSEILS) */
+.card-footer-advice {
+    height: 60px;
+    background: #F9F9F9; /* Gris très léger */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #eee;
 }
-.work-date { font-size: 0.7rem; color: #999; margin-bottom: 4px; }
-.work-items { font-size: 0.75rem; font-weight: bold; color: #555; line-height: 1.3; }
-
-.spacer { min-width: 5px; }
-.empty-msg { text-align: center; width: 100%; color: #999; font-size: 0.9rem;}
+.advice-item {
+    display: flex; flex-direction: column; align-items: center;
+    font-size: 0.75rem; color: #666; font-weight: bold;
+}
+.advice-icon { font-size: 1.2rem; margin-bottom: 2px; }
 
 /* --- MODAL --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6); z-index: 100;
+    background: rgba(0,0,0,0.7); z-index: 100;
     display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(4px);
 }
 .hidden { display: none; }
-
 .modal-content {
-    background: #FFFFFF; padding: 25px;
-    border-radius: 20px; width: 90%; max-width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    max-height: 90vh; overflow-y: auto; /* Scroll si formulaire long */
+    background: #FFFFFF; padding: 25px; border-radius: 20px;
+    width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 .modal-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 20px; text-align: center; }
 
+/* Style des tâches dans le formulaire */
+.tasks-container { background: #f9f9f9; padding: 10px; border-radius: 10px; }
+.task-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;
+}
+.task-row label { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.9rem; }
+.task-row input[type="date"] {
+    padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-family: 'Lato';
+}
+.hidden { display: none; }
+
+/* Calendrier Liste */
+.calendar-list { margin-top: 10px; margin-bottom: 20px; }
+.cal-item {
+    padding: 10px; background: #f4f4f4; margin-bottom: 8px; border-radius: 8px;
+    border-left: 4px solid #CFDBC5;
+}
+.cal-tree { font-weight: bold; display: block; }
+.cal-action { font-size: 0.9rem; color: #555; }
+
+/* Inputs généraux */
 .form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; color: #444; }
-.form-group input[type="text"], .form-group input[type="date"], .form-group select {
-    width: 100%; padding: 12px; border: 1px solid #e0e0e0;
-    border-radius: 10px; background: #FAFAFA; font-family: 'Lato', sans-serif;
+.form-group label { display: block; margin-bottom: 6px; font-weight: 700; color: #444; }
+.form-group input[type="text"], .form-group select {
+    width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px;
 }
-
-/* Style des Checkboxes (Menu Travaux) */
-.checkbox-group {
-    display: flex; flex-direction: column; gap: 8px;
-    background: #FAFAFA; padding: 10px; border-radius: 10px; border: 1px solid #e0e0e0;
-}
-.checkbox-group label {
-    display: flex; align-items: center; gap: 10px;
-    font-weight: normal; margin: 0; font-size: 0.9rem; cursor: pointer;
-}
-.checkbox-group input[type="checkbox"] {
-    width: 18px; height: 18px; accent-color: #556B2F;
-}
-
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
 .btn-primary { flex: 1; background: #1a1a1a; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 .btn-secondary { flex: 1; background: transparent; border: 1px solid #ccc; color: #666; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
