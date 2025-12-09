@@ -4,20 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bonsaïs Do</title>
+    
     <link rel="manifest" href="manifest.json">
+    
     <meta name="theme-color" content="#FDFBF7">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <header>
         <div class="top-bar">
-            <button class="icon-btn">&#9776;</button> <button class="icon-btn">&#128172;</button> </div>
+            <button class="icon-btn" aria-label="Menu">&#9776;</button> 
+            
+            <button id="install-btn" class="icon-btn install-mode" style="display: none;">
+                &#8595; Installer
+            </button>
+
+            <button class="icon-btn" aria-label="Messages">&#128172;</button> 
+        </div>
+        
         <div class="intro">
             <h1>Mes Bonsaïs</h1>
-            <p id="compteur-arbres">Chargement...</p>
+            <p id="compteur-arbres">Chargement de vos arbres...</p>
         </div>
     </header>
 
@@ -26,7 +39,7 @@
             </div>
     </main>
 
-    <button id="add-btn" class="fab">+</button>
+    <button id="add-btn" class="fab" aria-label="Ajouter un bonsaï">+</button>
 
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal-content">
@@ -34,23 +47,24 @@
             
             <form id="bonsai-form">
                 <div class="form-group">
-                    <label>Nom de l'arbre</label>
+                    <label for="input-name">Nom de l'arbre</label>
                     <input type="text" id="input-name" placeholder="Ex: Mon beau Pin" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Espèce (Base de données)</label>
+                    <label for="input-species">Espèce</label>
                     <select id="input-species" required>
+                        <option value="" disabled selected>Choisir une espèce...</option>
                         </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Dernier arrosage</label>
+                    <label for="input-water">Dernier arrosage</label>
                     <input type="date" id="input-water" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Photo</label>
+                    <label for="input-photo">Photo</label>
                     <input type="file" id="input-photo" accept="image/*">
                 </div>
 
@@ -63,9 +77,14 @@
     </div>
 
     <script src="app.js"></script>
+    
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker enregistré', reg))
+                    .catch(err => console.log('Erreur SW:', err));
+            });
         }
     </script>
 </body>
